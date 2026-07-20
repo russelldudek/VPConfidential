@@ -1,0 +1,23 @@
+
+:root {
+  /* Confidential-employer exception: no official brand assets or colors were supplied or publicly identifiable. */
+  --ink-950: #071015;
+  --ink-900: #0b171d;
+  --ink-800: #14252d;
+  --ink-700: #213942;
+  --paper: #f3efe6;
+  --paper-2: #e8e1d5;
+  --white: #fffdf8;
+  --signal-amber: #ffb000;
+  --signal-teal: #45d0c7;
+  --signal-coral: #f06c5b;
+  --signal-blue: #68a9ff;
+  --muted: #92a3aa;
+  --line: rgba(7, 16, 21, .16);
+  --line-dark: rgba(255,255,255,.14);
+  --shadow: 0 28px 70px rgba(2, 9, 12, .18);
+  --radius-lg: 30px;
+  --radius-md: 18px;
+  --font-sans: "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+}

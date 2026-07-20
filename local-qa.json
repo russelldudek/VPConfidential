@@ -1,0 +1,24 @@
+{
+  "rendered_viewports": [
+    "1440x900",
+    "1280x800",
+    "768x1024",
+    "390x844"
+  ],
+  "routes_checked": 7,
+  "horizontal_overflow_findings": 0,
+  "browser_console_errors": 0,
+  "scenario_interaction": "passed",
+  "reduced_motion_transition_duration": "0s",
+  "internal_link_findings": 0,
+  "forbidden_internal_name_matches": 0,
+  "pdf_page_counts": {
+    "resume.pdf": 2,
+    "cover-letter.pdf": 1,
+    "interview-thesis-brief.pdf": 4,
+    "120-day-entry-plan.pdf": 3,
+    "hard-objection-analysis.pdf": 2,
+    "manufacturing-shape-review.pdf": 2
+  },
+  "live_verification": "pending GitHub Pages enablement"
+}
