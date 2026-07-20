@@ -1,30 +1,113 @@
-name: Publish candidate campaign
+name: Build candidate documents
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - '.bootstrap/READY'
-  workflow_dispatch:
+      - '.candidate-release/READY'
+      - '*.html'
+      - '*.css'
+      - '*.js'
+      - 'assets/brand/**'
+      - 'scripts/generate_pdfs.py'
+      - 'requirements.txt'
 
 permissions:
   contents: write
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Assemble campaign package
+        with:
+          fetch-depth: 0
+
+      - name: Apply staged release
         shell: bash
         run: |
           set -euo pipefail
-          cat .bootstrap/part-* > /tmp/campaign.b64
-          base64 --decode /tmp/campaign.b64 > /tmp/campaign.tar.gz
-          tar -xzf /tmp/campaign.tar.gz -C .
-          python scripts/generate_pdfs.py
-          rm -rf .bootstrap
-      - name: Commit complete campaign
+          if [[ -f .candidate-release/READY ]]; then
+            base64 --decode .candidate-release/source.b64 > "$RUNNER_TEMP/candidate-release.tgz"
+            echo "d92484f4da1cc533126b89b99a321e78a05f4b818951dde1dea362b368b23edd  $RUNNER_TEMP/candidate-release.tgz" | sha256sum -c -
+            mkdir -p "$RUNNER_TEMP/candidate-release"
+            tar -xzf "$RUNNER_TEMP/candidate-release.tgz" -C "$RUNNER_TEMP/candidate-release"
+            rsync -a --delete --exclude='.git/' --exclude='.github/' "$RUNNER_TEMP/candidate-release/" ./
+            rm -rf .candidate-release .bootstrap
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install document tooling
+        run: pip install -r requirements.txt pypdf==5.9.0
+
+      - name: Generate application PDFs
+        run: python scripts/generate_pdfs.py
+
+      - name: Verify campaign package
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from pypdf import PdfReader
+
+          required = [
+              'index.html', 'resume.html', 'cover-letter.html',
+              'interview-brief.html', '120-day-plan.html',
+              'executive-fit.html', 'manufacturing-shape-review.html',
+              'styles.css', 'brand-tokens.css', 'app.js',
+              'assets/brand/confidential-organization.svg',
+              'scripts/generate_pdfs.py', 'requirements.txt',
+              'docs/resume.pdf', 'docs/cover-letter.pdf',
+              'docs/interview-thesis-brief.pdf',
+              'docs/120-day-entry-plan.pdf',
+              'docs/executive-fit-brief.pdf',
+              'docs/manufacturing-shape-review.pdf',
+          ]
+          missing = [path for path in required if not Path(path).is_file()]
+          assert not missing, f'Missing required files: {missing}'
+
+          retired = [
+              Path('hard-objection.html'),
+              Path('docs/hard-objection-analysis.pdf'),
+          ]
+          assert not any(path.exists() for path in retired), 'Retired files remain'
+
+          forbidden = [
+              ''.join(map(chr, [114,111,108,101,102,111,114,103,101])),
+              ''.join(map(chr, [109,97,110,100,97,116,101])),
+              ''.join(map(chr, [104,97,114,100,32,111,98,106,101,99,116,105,111,110])),
+              ''.join(map(chr, [104,97,114,100,45,111,98,106,101,99,116,105,111,110])),
+          ]
+
+          text_suffixes = {'.html', '.css', '.js', '.svg', '.md', '.json', '.py', '.txt', '.yml', '.yaml'}
+          for path in Path('.').rglob('*'):
+              if path.is_file() and path.suffix.lower() in text_suffixes:
+                  value = path.read_text(encoding='utf-8', errors='ignore').lower()
+                  for term in forbidden:
+                      assert term not in value, f'Forbidden public term in {path}'
+
+          expected_pages = {
+              'docs/resume.pdf': 2,
+              'docs/cover-letter.pdf': 1,
+              'docs/interview-thesis-brief.pdf': 4,
+              'docs/120-day-entry-plan.pdf': 3,
+              'docs/executive-fit-brief.pdf': 1,
+              'docs/manufacturing-shape-review.pdf': 1,
+          }
+          for filename, count in expected_pages.items():
+              reader = PdfReader(filename)
+              assert len(reader.pages) == count, f'{filename}: expected {count} pages'
+              value = '\n'.join(page.extract_text() or '' for page in reader.pages).lower()
+              value += '\n' + str(reader.metadata or {}).lower()
+              for term in forbidden:
+                  assert term not in value, f'Forbidden PDF term in {filename}'
+          PY
+
+      - name: Commit revised campaign
         shell: bash
         run: |
           set -euo pipefail
@@ -32,6 +115,6 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if ! git diff --cached --quiet; then
-            git commit -m "Publish global manufacturing candidate campaign"
+            git commit -m "Reposition global manufacturing candidate campaign"
             git push
           fi
