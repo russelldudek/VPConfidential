@@ -70,17 +70,15 @@ jobs:
           missing = [path for path in required if not Path(path).is_file()]
           assert not missing, f'Missing required files: {missing}'
 
-          retired = [
-              Path('hard-objection.html'),
-              Path('docs/hard-objection-analysis.pdf'),
-          ]
+          dash_name = ''.join(map(chr, [104,97,114,100,45,111,98,106,101,99,116,105,111,110]))
+          retired = [Path(dash_name + '.html'), Path('docs') / (dash_name + '-analysis.pdf')]
           assert not any(path.exists() for path in retired), 'Retired files remain'
 
           forbidden = [
               ''.join(map(chr, [114,111,108,101,102,111,114,103,101])),
               ''.join(map(chr, [109,97,110,100,97,116,101])),
               ''.join(map(chr, [104,97,114,100,32,111,98,106,101,99,116,105,111,110])),
-              ''.join(map(chr, [104,97,114,100,45,111,98,106,101,99,116,105,111,110])),
+              dash_name,
           ]
 
           text_suffixes = {'.html', '.css', '.js', '.svg', '.md', '.json', '.py', '.txt', '.yml', '.yaml'}
