@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "errors": [],
+  "page_counts": {
+    "resume.pdf": 2,
+    "cover-letter.pdf": 1,
+    "interview-thesis-brief.pdf": 4,
+    "120-day-entry-plan.pdf": 3,
+    "executive-fit-brief.pdf": 1,
+    "manufacturing-shape-review.pdf": 1
+  },
+  "html_routes": 7,
+  "public_text_files": 23
+}

@@ -1,24 +1,30 @@
 {
-  "rendered_viewports": [
-    "1440x900",
-    "1280x800",
-    "768x1024",
-    "390x844"
-  ],
-  "routes_checked": 7,
-  "horizontal_overflow_findings": 0,
-  "browser_console_errors": 0,
-  "scenario_interaction": "passed",
-  "reduced_motion_transition_duration": "0s",
-  "internal_link_findings": 0,
-  "forbidden_internal_name_matches": 0,
+  "status": "passed-local",
+  "positioning": "affirmative-pole-position",
+  "visual_defect": "manufacturing-shape-rail-overlap-corrected",
   "pdf_page_counts": {
     "resume.pdf": 2,
     "cover-letter.pdf": 1,
     "interview-thesis-brief.pdf": 4,
     "120-day-entry-plan.pdf": 3,
-    "hard-objection-analysis.pdf": 2,
-    "manufacturing-shape-review.pdf": 2
+    "executive-fit-brief.pdf": 1,
+    "manufacturing-shape-review.pdf": 1
   },
-  "live_verification": "pending GitHub Pages enablement"
+  "public_term_scan": {
+    "deficit_oriented_artifact_terms": 0,
+    "deprecated_role_shorthand": 0
+  },
+  "viewports": [
+    "1440x900",
+    "1280x800",
+    "768x1024",
+    "390x844",
+    "320x700"
+  ],
+  "reduced_motion": true,
+  "candidate_facing_confidentiality": true,
+  "browser_route_matrix": "35/35 passed",
+  "horizontal_overflow_findings": 0,
+  "browser_console_errors": 0,
+  "manufacturing_shape_rail_geometry": "passed"
 }
